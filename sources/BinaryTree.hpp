@@ -9,7 +9,8 @@
 namespace ariel {
     template<typename T>
     class BinaryTree {
-    private:
+
+    public:
         struct Node{
             T value;
             Node *left;
@@ -18,9 +19,7 @@ namespace ariel {
             explicit Node(T* val):left(nullptr),right(nullptr),parent(nullptr),value(val){};
 //            friend std::ostream& operator<<(std::ostream& os,const Node& node){return os;};
         };
-        Node* root;
-    public:
-        BinaryTree()= default;;
+        BinaryTree(){};
         BinaryTree<T>& add_root(T val){return *this;};
         /**
          * if parent val not in tree throw error
@@ -37,10 +36,17 @@ namespace ariel {
         * @return
         */
         BinaryTree<T>& add_right(T parent_val,T child_val){return *this;};
+        bool has_value(T val){
+            return false;
+        }
         /************************************* Operator Functions *************************************/
         friend std::ostream& operator<<(std::ostream& os,const BinaryTree<T>& binaryTree){return os;};
+    private:
+        Node* root;
+
 
         /************************************* Iterator Functions *************************************/
+    public:
         class postorder{
         private:
             Node *m_pointer;
