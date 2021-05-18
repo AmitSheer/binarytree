@@ -8,12 +8,17 @@
 #include <string>
 #include <unistd.h>
 #include <algorithm>
+#include <array>
 #include "sources/BinaryTree.hpp"
 using namespace std;
 using namespace ariel;
 using namespace doctest;
 
-constexpr int MAX_RAND_VALUE= 5;
+constexpr int MAX_RAND_VALUE= 17;
+constexpr int FOR_TRAVERS_FUNCTION= 3;
+constexpr std::array<int,15> preorder =  {0,1,3,7,8,4,9,10,2,5,11,12,6,13,14};
+constexpr std::array<int,15> postorder = {7,8,3,9,10,4,1,11,12,5,13,14,6,2,0};
+constexpr std::array<int,15> inorder =   {7,3,8,1,9,10,4,0,11,5,12,2,13,6,14};
 /*
  * credit to https://stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c
  */
@@ -36,8 +41,8 @@ std::string gen_random( size_t length )
 BinaryTree<int> binaryTreeGenerator(int n){
     BinaryTree<int> bt;
     bt.add_root(0);
-    int depth = 2^(n-1);
-    for (int i = 0; i < depth; ++i) {
+    int num_of_nodes = 2 ^(n - 1);
+    for (int i = 0; i < num_of_nodes; ++i) {
         bt.add_left(2*i,2*i+1);
         bt.add_right(2*i,2*i+2);
     }
@@ -57,8 +62,8 @@ BinaryTree<int> binaryTreeGenerator(int n){
 
 TEST_CASE("BinaryTree add new root"){
     int random_val = rand()%MAX_RAND_VALUE;
-    char random_char = gen_random(random_val).at(0);
-    string random_string = gen_random(random_val);
+    string random_string = gen_random(sizeof(random_val));
+    char random_char = random_string.at(0);
     BinaryTree<int> bt_int;
     BinaryTree<std::string> bt_string;
     BinaryTree<char> bt_char;
@@ -127,3 +132,80 @@ TEST_CASE("BinaryTree add_right, add_left, root") {
  *  <<:
  *      no need to test
 */
+
+TEST_CASE("inorder"){
+    int random_val = rand()%MAX_RAND_VALUE;
+    int increase_val = 2^(random_val+1)-1;
+    BinaryTree<int> bt = binaryTreeGenerator(random_val);
+    auto inorder_b = bt.begin_inorder();
+    (*inorder_b) = increase_val+4;
+    CHECK((*inorder_b)==increase_val+4);
+    CHECK_NOTHROW(++inorder_b);
+    CHECK((*inorder_b)==(2^(random_val)));
+    inorder_b = bt.begin_inorder();
+    auto second_in_travers = inorder_b++;
+    CHECK_FALSE((*inorder_b)==(*second_in_travers));
+    CHECK_FALSE(inorder_b==second_in_travers);
+    second_in_travers = inorder_b;
+    CHECK(inorder_b==second_in_travers);
+    CHECK_FALSE(inorder_b!=second_in_travers);
+}
+TEST_CASE("postorder"){
+    int random_val = rand()%MAX_RAND_VALUE;
+    int increase_val = 2^(random_val+1)-1;
+    BinaryTree<int> bt = binaryTreeGenerator(random_val);
+    auto postorder_b = bt.begin_postorder();
+    (*postorder_b) = increase_val+4;
+            CHECK((*postorder_b)==(increase_val+4));
+            CHECK_NOTHROW(++postorder_b);
+            CHECK((*postorder_b)==(2^(random_val)));
+    postorder_b = bt.begin_postorder();
+    auto second_in_travers = postorder_b++;
+            CHECK_FALSE((*postorder_b)==(*second_in_travers));
+            CHECK_FALSE(postorder_b==second_in_travers);
+    second_in_travers = postorder_b;
+            CHECK(postorder_b==second_in_travers);
+            CHECK_FALSE(postorder_b!=second_in_travers);
+}
+TEST_CASE("preorder"){
+    int random_val = rand()%MAX_RAND_VALUE;
+    int increase_val = 2^(random_val+1)-1;
+    BinaryTree<int> bt = binaryTreeGenerator(random_val);
+    auto preorder_b = bt.begin_preorder();
+    (*preorder_b) = increase_val+4;
+            CHECK((*preorder_b)==increase_val+4);
+            CHECK_NOTHROW(++preorder_b);
+            CHECK((*preorder_b)==1);
+    preorder_b = bt.begin_preorder();
+    auto second_in_travers = preorder_b++;
+            CHECK_FALSE((*preorder_b)==(*second_in_travers));
+            CHECK_FALSE(preorder_b==second_in_travers);
+    second_in_travers = preorder_b;
+            CHECK(preorder_b==second_in_travers);
+            CHECK_FALSE(preorder_b!=second_in_travers);
+}
+
+TEST_CASE("Traverse Pre-Order"){
+    BinaryTree<int> bt = binaryTreeGenerator(FOR_TRAVERS_FUNCTION);
+    int num_of_nodes = 2^(FOR_TRAVERS_FUNCTION+1)-1;
+    auto preorder_b = bt.begin_preorder();
+    auto preorder_e = bt.end_preorder();
+    auto inorder_b = bt.begin_inorder();
+    auto inorder_e = bt.end_inorder();
+    auto postorder_b = bt.begin_postorder();
+    auto postorder_e = bt.end_postorder();
+    for (int i = 0; i < num_of_nodes&&preorder_b!=preorder_e&&inorder_b!=inorder_e&&postorder_b!=postorder_e; ++i,++postorder_b,++inorder_b,++preorder_b) {
+        CHECK((*preorder_b)==preorder.at(i));
+        CHECK((*inorder_b)==inorder.at(i));
+        CHECK((*postorder_b)==postorder.at(i));
+    }
+    if(postorder_b!=postorder_e){
+        FAIL_CHECK("didn't get to the end of postorder");
+    }
+    if(preorder_b!=preorder_e){
+        FAIL_CHECK("didn't get to the end of preorder");
+    }
+    if(inorder_b!=inorder_e){
+        FAIL_CHECK("didn't get to the end of inorder");
+    }
+}

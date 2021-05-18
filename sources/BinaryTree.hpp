@@ -8,19 +8,22 @@
 
 namespace ariel {
     template<typename T>
-    class BinaryTree {
-
-    public:
-        struct Node{
-            T value;
-            Node *left;
-            Node *right;
-            Node *parent;
-            explicit Node(T* val):left(nullptr),right(nullptr),parent(nullptr),value(val){};
+    struct Node{
+        T value;
+        Node *left;
+        Node *right;
+        Node *parent;
+        explicit Node(T* val):left(nullptr),right(nullptr),parent(nullptr),value(val){};
 //            friend std::ostream& operator<<(std::ostream& os,const Node& node){return os;};
-        };
+    };
+
+    template<typename T>
+    class BinaryTree {
+    private:
+        Node<T>* root;
+    public:
         BinaryTree(){};
-        BinaryTree<T>& add_root(T val){return *this;};
+        BinaryTree& add_root(T val){return *this;};
         /**
          * if parent val not in tree throw error
          * if exist more then once make random assign to one of the options
@@ -28,30 +31,24 @@ namespace ariel {
          * @param child_val
          * @return
          */
-        BinaryTree<T>& add_left(T parent_val,T child_val){return *this;};
+        BinaryTree& add_left(T parent_val,T child_val){return *this;};
         /**
         * if parent val not in tree throw error
         * @param parent_val
         * @param child_val
         * @return
         */
-        BinaryTree<T>& add_right(T parent_val,T child_val){return *this;};
-        bool has_value(T val){
-            return false;
-        }
+        BinaryTree& add_right(T parent_val,T child_val){return *this;};
         /************************************* Operator Functions *************************************/
         friend std::ostream& operator<<(std::ostream& os,const BinaryTree<T>& binaryTree){return os;};
-    private:
-        Node* root;
-
-
         /************************************* Iterator Functions *************************************/
-    public:
+        //TODO: PUT ALL ITERATORS IN SEPARATE HPP&CPP FILES
         class postorder{
         private:
-            Node *m_pointer;
+            Node<T> *m_pointer;
+            /*traverse*/
         public:
-            explicit postorder(Node* pNode= nullptr):m_pointer(pNode){};
+            explicit postorder(Node<T>* pNode= nullptr/*, function*/):m_pointer(pNode){};
             T& operator*() const{
                 return m_pointer->value;
             };
@@ -59,6 +56,7 @@ namespace ariel {
                 return &(m_pointer->value);
             };
             postorder& operator++(){
+
                 m_pointer = m_pointer->right;
                 return *this;
             };
@@ -73,9 +71,9 @@ namespace ariel {
         };
         class inorder{
         private:
-            Node *m_pointer;
+            Node<T> *m_pointer;
         public:
-            explicit inorder(Node* pNode= nullptr):m_pointer(pNode){};
+            explicit inorder(Node<T>* pNode= nullptr):m_pointer(pNode){};
             T& operator*() const{
                 return m_pointer->value;
             };
@@ -97,9 +95,9 @@ namespace ariel {
         };
         class preorder{
         private:
-            Node *m_pointer;
+            Node<T> *m_pointer;
         public:
-            explicit preorder(Node* pNode= nullptr):m_pointer(pNode){};
+            explicit preorder(Node<T>* pNode= nullptr):m_pointer(pNode){};
             T& operator*() const{
                 return m_pointer->value;
             };
@@ -142,6 +140,13 @@ namespace ariel {
         }
         postorder end_postorder(){
             return postorder();
+        }
+        /************************************* For Testing Functions *************************************/
+        bool has_value(T val){
+            return false;
+        }
+        Node<T>* get_preorder_val_array(){
+            return this->root;
         }
     };
 }

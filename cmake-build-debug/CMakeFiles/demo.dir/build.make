@@ -102,31 +102,31 @@ CMakeFiles/demo.dir/sources/BinaryTree.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/demo.dir/sources/BinaryTree.cpp.s"
 	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/amit/CLionProjects/binarytree/sources/BinaryTree.cpp -o CMakeFiles/demo.dir/sources/BinaryTree.cpp.s
 
-CMakeFiles/demo.dir/sources/Test.cpp.o: CMakeFiles/demo.dir/flags.make
-CMakeFiles/demo.dir/sources/Test.cpp.o: ../sources/Test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/demo.dir/sources/Test.cpp.o"
-	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/demo.dir/sources/Test.cpp.o -c /home/amit/CLionProjects/binarytree/sources/Test.cpp
+CMakeFiles/demo.dir/Test.cpp.o: CMakeFiles/demo.dir/flags.make
+CMakeFiles/demo.dir/Test.cpp.o: ../Test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/demo.dir/Test.cpp.o"
+	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/demo.dir/Test.cpp.o -c /home/amit/CLionProjects/binarytree/Test.cpp
 
-CMakeFiles/demo.dir/sources/Test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/demo.dir/sources/Test.cpp.i"
-	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/amit/CLionProjects/binarytree/sources/Test.cpp > CMakeFiles/demo.dir/sources/Test.cpp.i
+CMakeFiles/demo.dir/Test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/demo.dir/Test.cpp.i"
+	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/amit/CLionProjects/binarytree/Test.cpp > CMakeFiles/demo.dir/Test.cpp.i
 
-CMakeFiles/demo.dir/sources/Test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/demo.dir/sources/Test.cpp.s"
-	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/amit/CLionProjects/binarytree/sources/Test.cpp -o CMakeFiles/demo.dir/sources/Test.cpp.s
+CMakeFiles/demo.dir/Test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/demo.dir/Test.cpp.s"
+	/usr/bin/clang++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/amit/CLionProjects/binarytree/Test.cpp -o CMakeFiles/demo.dir/Test.cpp.s
 
 # Object files for target demo
 demo_OBJECTS = \
 "CMakeFiles/demo.dir/Demo.cpp.o" \
 "CMakeFiles/demo.dir/sources/BinaryTree.cpp.o" \
-"CMakeFiles/demo.dir/sources/Test.cpp.o"
+"CMakeFiles/demo.dir/Test.cpp.o"
 
 # External object files for target demo
 demo_EXTERNAL_OBJECTS =
 
 demo: CMakeFiles/demo.dir/Demo.cpp.o
 demo: CMakeFiles/demo.dir/sources/BinaryTree.cpp.o
-demo: CMakeFiles/demo.dir/sources/Test.cpp.o
+demo: CMakeFiles/demo.dir/Test.cpp.o
 demo: CMakeFiles/demo.dir/build.make
 demo: CMakeFiles/demo.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable demo"

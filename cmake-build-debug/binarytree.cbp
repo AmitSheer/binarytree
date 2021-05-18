@@ -87,13 +87,13 @@
 		<Unit filename="/home/amit/CLionProjects/binarytree/Demo.cpp">
 			<Option target="demo"/>
 		</Unit>
+		<Unit filename="/home/amit/CLionProjects/binarytree/Test.cpp">
+			<Option target="demo"/>
+		</Unit>
 		<Unit filename="/home/amit/CLionProjects/binarytree/sources/BinaryTree.cpp">
 			<Option target="demo"/>
 		</Unit>
 		<Unit filename="/home/amit/CLionProjects/binarytree/sources/BinaryTree.hpp">
-			<Option target="demo"/>
-		</Unit>
-		<Unit filename="/home/amit/CLionProjects/binarytree/sources/Test.cpp">
 			<Option target="demo"/>
 		</Unit>
 		<Unit filename="/home/amit/CLionProjects/binarytree/CMakeLists.txt">

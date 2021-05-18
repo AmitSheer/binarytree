@@ -5,8 +5,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/amit/CLionProjects/binarytree/Demo.cpp" "/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles/demo.dir/Demo.cpp.o"
+  "/home/amit/CLionProjects/binarytree/Test.cpp" "/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles/demo.dir/Test.cpp.o"
   "/home/amit/CLionProjects/binarytree/sources/BinaryTree.cpp" "/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles/demo.dir/sources/BinaryTree.cpp.o"
-  "/home/amit/CLionProjects/binarytree/sources/Test.cpp" "/home/amit/CLionProjects/binarytree/cmake-build-debug/CMakeFiles/demo.dir/sources/Test.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

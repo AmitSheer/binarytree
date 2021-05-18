@@ -169,6 +169,33 @@ Demo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Demo.cpp.s
 .PHONY : Demo.cpp.s
 
+Test.o: Test.cpp.o
+
+.PHONY : Test.o
+
+# target to build an object file
+Test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Test.cpp.o
+.PHONY : Test.cpp.o
+
+Test.i: Test.cpp.i
+
+.PHONY : Test.i
+
+# target to preprocess a source file
+Test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Test.cpp.i
+.PHONY : Test.cpp.i
+
+Test.s: Test.cpp.s
+
+.PHONY : Test.s
+
+# target to generate assembly for a file
+Test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Test.cpp.s
+.PHONY : Test.cpp.s
+
 sources/BinaryTree.o: sources/BinaryTree.cpp.o
 
 .PHONY : sources/BinaryTree.o
@@ -196,33 +223,6 @@ sources/BinaryTree.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BinaryTree.cpp.s
 .PHONY : sources/BinaryTree.cpp.s
 
-sources/Test.o: sources/Test.cpp.o
-
-.PHONY : sources/Test.o
-
-# target to build an object file
-sources/Test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/Test.cpp.o
-.PHONY : sources/Test.cpp.o
-
-sources/Test.i: sources/Test.cpp.i
-
-.PHONY : sources/Test.i
-
-# target to preprocess a source file
-sources/Test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/Test.cpp.i
-.PHONY : sources/Test.cpp.i
-
-sources/Test.s: sources/Test.cpp.s
-
-.PHONY : sources/Test.s
-
-# target to generate assembly for a file
-sources/Test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/Test.cpp.s
-.PHONY : sources/Test.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -235,12 +235,12 @@ help:
 	@echo "... Demo.o"
 	@echo "... Demo.i"
 	@echo "... Demo.s"
+	@echo "... Test.o"
+	@echo "... Test.i"
+	@echo "... Test.s"
 	@echo "... sources/BinaryTree.o"
 	@echo "... sources/BinaryTree.i"
 	@echo "... sources/BinaryTree.s"
-	@echo "... sources/Test.o"
-	@echo "... sources/Test.i"
-	@echo "... sources/Test.s"
 .PHONY : help
 
 
