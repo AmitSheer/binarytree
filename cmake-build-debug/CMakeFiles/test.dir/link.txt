@@ -1,0 +1,1 @@
+/usr/bin/clang++-9 -g CMakeFiles/test.dir/Test.cpp.o CMakeFiles/test.dir/sources/BinaryTree.cpp.o CMakeFiles/test.dir/sources/BTIterator.cpp.o -o test 

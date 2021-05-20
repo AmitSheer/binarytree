@@ -10,11 +10,13 @@
 #include <algorithm>
 #include <array>
 #include "sources/BinaryTree.hpp"
+#include "sources/BTIterator.hpp"
+#include "sources/Node.hpp"
 using namespace std;
 using namespace ariel;
 using namespace doctest;
 
-constexpr int MAX_RAND_VALUE= 17;
+constexpr int MAX_RAND_VALUE= 9;
 constexpr int FOR_TRAVERS_FUNCTION= 3;
 constexpr std::array<int,15> preorder =  {0,1,3,7,8,4,9,10,2,5,11,12,6,13,14};
 constexpr std::array<int,15> postorder = {7,8,3,9,10,4,1,11,12,5,13,14,6,2,0};
@@ -70,9 +72,9 @@ TEST_CASE("BinaryTree add new root"){
     bt_char.add_root(random_char);
     bt_int.add_root(random_val);
     bt_string.add_root(random_string);
-    CHECK((*bt_char.begin_preorder())==random_char);
-    CHECK((*bt_int.begin_preorder())==random_val);
-    CHECK((*bt_string.begin_preorder())==random_string);
+    CHECK(bt_char.has_value(random_string.at(0)));
+    CHECK(bt_int.has_value(random_val));
+    CHECK(bt_string.has_value(random_string));
 }
 
 TEST_CASE("BinaryTree add_right, add_left, root") {
@@ -194,7 +196,7 @@ TEST_CASE("Traverse Pre-Order"){
     auto inorder_e = bt.end_inorder();
     auto postorder_b = bt.begin_postorder();
     auto postorder_e = bt.end_postorder();
-    for (int i = 0; i < num_of_nodes&&preorder_b!=preorder_e&&inorder_b!=inorder_e&&postorder_b!=postorder_e; ++i,++postorder_b,++inorder_b,++preorder_b) {
+    for (std::size_t i = 0; i < num_of_nodes&&preorder_b!=preorder_e&&inorder_b!=inorder_e&&postorder_b!=postorder_e; ++i,++postorder_b,++inorder_b,++preorder_b) {
         CHECK((*preorder_b)==preorder.at(i));
         CHECK((*inorder_b)==inorder.at(i));
         CHECK((*postorder_b)==postorder.at(i));

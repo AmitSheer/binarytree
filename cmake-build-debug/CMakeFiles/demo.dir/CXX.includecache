@@ -18,11 +18,25 @@ stdexcept
 sources/BinaryTree.hpp
 /home/amit/CLionProjects/binarytree/sources/BinaryTree.hpp
 
+/home/amit/CLionProjects/binarytree/sources/BTIterator.hpp
+Node.hpp
+/home/amit/CLionProjects/binarytree/sources/Node.hpp
+iostream
+-
+
 /home/amit/CLionProjects/binarytree/sources/BinaryTree.cpp
 BinaryTree.hpp
 /home/amit/CLionProjects/binarytree/sources/BinaryTree.hpp
+iostream
+-
 
 /home/amit/CLionProjects/binarytree/sources/BinaryTree.hpp
+iostream
+-
+BTIterator.hpp
+/home/amit/CLionProjects/binarytree/sources/BTIterator.hpp
+
+/home/amit/CLionProjects/binarytree/sources/Node.hpp
 iostream
 -
 

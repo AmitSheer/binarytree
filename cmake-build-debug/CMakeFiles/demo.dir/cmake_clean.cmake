@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/demo.dir/Demo.cpp.o"
-  "CMakeFiles/demo.dir/Test.cpp.o"
+  "CMakeFiles/demo.dir/sources/BTIterator.cpp.o"
   "CMakeFiles/demo.dir/sources/BinaryTree.cpp.o"
   "demo"
   "demo.pdb"

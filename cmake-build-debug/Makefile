@@ -130,6 +130,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named test
+
+# Build rule for target.
+test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test
+.PHONY : test
+
+# fast build rule for target.
+test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
+
+#=============================================================================
 # Target rules for targets named demo
 
 # Build rule for target.
@@ -175,7 +188,7 @@ Test.o: Test.cpp.o
 
 # target to build an object file
 Test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Test.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/Test.cpp.o
 .PHONY : Test.cpp.o
 
 Test.i: Test.cpp.i
@@ -184,7 +197,7 @@ Test.i: Test.cpp.i
 
 # target to preprocess a source file
 Test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Test.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/Test.cpp.i
 .PHONY : Test.cpp.i
 
 Test.s: Test.cpp.s
@@ -193,8 +206,38 @@ Test.s: Test.cpp.s
 
 # target to generate assembly for a file
 Test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Test.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/Test.cpp.s
 .PHONY : Test.cpp.s
+
+sources/BTIterator.o: sources/BTIterator.cpp.o
+
+.PHONY : sources/BTIterator.o
+
+# target to build an object file
+sources/BTIterator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sources/BTIterator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BTIterator.cpp.o
+.PHONY : sources/BTIterator.cpp.o
+
+sources/BTIterator.i: sources/BTIterator.cpp.i
+
+.PHONY : sources/BTIterator.i
+
+# target to preprocess a source file
+sources/BTIterator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sources/BTIterator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BTIterator.cpp.i
+.PHONY : sources/BTIterator.cpp.i
+
+sources/BTIterator.s: sources/BTIterator.cpp.s
+
+.PHONY : sources/BTIterator.s
+
+# target to generate assembly for a file
+sources/BTIterator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sources/BTIterator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BTIterator.cpp.s
+.PHONY : sources/BTIterator.cpp.s
 
 sources/BinaryTree.o: sources/BinaryTree.cpp.o
 
@@ -202,6 +245,7 @@ sources/BinaryTree.o: sources/BinaryTree.cpp.o
 
 # target to build an object file
 sources/BinaryTree.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sources/BinaryTree.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BinaryTree.cpp.o
 .PHONY : sources/BinaryTree.cpp.o
 
@@ -211,6 +255,7 @@ sources/BinaryTree.i: sources/BinaryTree.cpp.i
 
 # target to preprocess a source file
 sources/BinaryTree.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sources/BinaryTree.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BinaryTree.cpp.i
 .PHONY : sources/BinaryTree.cpp.i
 
@@ -220,6 +265,7 @@ sources/BinaryTree.s: sources/BinaryTree.cpp.s
 
 # target to generate assembly for a file
 sources/BinaryTree.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sources/BinaryTree.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/sources/BinaryTree.cpp.s
 .PHONY : sources/BinaryTree.cpp.s
 
@@ -232,12 +278,16 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... demo"
+	@echo "... test"
 	@echo "... Demo.o"
 	@echo "... Demo.i"
 	@echo "... Demo.s"
 	@echo "... Test.o"
 	@echo "... Test.i"
 	@echo "... Test.s"
+	@echo "... sources/BTIterator.o"
+	@echo "... sources/BTIterator.i"
+	@echo "... sources/BTIterator.s"
 	@echo "... sources/BinaryTree.o"
 	@echo "... sources/BinaryTree.i"
 	@echo "... sources/BinaryTree.s"

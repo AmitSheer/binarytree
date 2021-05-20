@@ -5,50 +5,63 @@
 
 #pragma once
 #include <iostream>
-
+#include <sstream>
+#include "BTIterator.hpp"
 namespace ariel {
-    template<typename T>
-    struct Node{
-        T value;
-        Node *left;
-        Node *right;
-        Node *parent;
-        explicit Node(T* val):left(nullptr),right(nullptr),parent(nullptr),value(val){};
-//            friend std::ostream& operator<<(std::ostream& os,const Node& node){return os;};
-    };
-
     template<typename T>
     class BinaryTree {
     private:
         Node<T>* root;
+        Node<T>* find_node_by_val(T val);
+        static void PreOrderTraverse( Node<T>* curr_node){
+
+        }
+        static void PostOrderTraverse(Node<T>* curr_node){
+
+        }
+        static void InOrderTraverse(Node<T>* curr_node){
+
+        }
     public:
-        BinaryTree(){};
-        BinaryTree& add_root(T val){return *this;};
+
+        BinaryTree<T>();
+
+
+        BinaryTree<T> &add_root(T val);
+
         /**
-         * if parent val not in tree throw error
-         * if exist more then once make random assign to one of the options
-         * @param parent_val
-         * @param child_val
-         * @return
-         */
-        BinaryTree& add_left(T parent_val,T child_val){return *this;};
+            * if parent val not in tree throw error
+            * if exist more then once make random assign to one of the options
+            * @param parent_val
+            * @param child_val
+            * @return
+            */
+
+        BinaryTree<T> &add_left(T parent_val, T child_val);
+
         /**
-        * if parent val not in tree throw error
-        * @param parent_val
-        * @param child_val
-        * @return
-        */
-        BinaryTree& add_right(T parent_val,T child_val){return *this;};
+           * if parent val not in tree throw error
+           * @param parent_val
+           * @param child_val
+           * @return
+           */
+        BinaryTree &add_right(T parent_val, T child_val) ;
+
         /************************************* Operator Functions *************************************/
-        friend std::ostream& operator<<(std::ostream& os,const BinaryTree<T>& binaryTree){return os;};
+        friend std::ostream &operator<<(std::ostream &os, const BinaryTree<T>& binaryTree){
+            os<<"bla";
+            return os;
+        };
         /************************************* Iterator Functions *************************************/
         //TODO: PUT ALL ITERATORS IN SEPARATE HPP&CPP FILES
+
+        /*
         class postorder{
         private:
             Node<T> *m_pointer;
-            /*traverse*/
+
         public:
-            explicit postorder(Node<T>* pNode= nullptr/*, function*/):m_pointer(pNode){};
+            explicit postorder(Node<T>* pNode= nullptr):m_pointer(pNode){};
             T& operator*() const{
                 return m_pointer->value;
             };
@@ -117,37 +130,94 @@ namespace ariel {
             bool operator!=(const preorder& rhs) const{return false;};
             friend std::ostream& operator<<(std::ostream& os,const preorder& node){return os;};
         };
-        inorder begin(){
+        */
+        BTIterator<T> begin(){
             return begin_inorder();
         };
-        inorder end(){
+        BTIterator<T> end(){
             return end_inorder();
         };
-        preorder begin_preorder(){
-            return preorder(root);
+        BTIterator<T> begin_preorder(){
+            BTIterator<T>  bti = BTIterator<T>(PreOrderTraverse,root);
+            return bti.begin();
         }
-        preorder end_preorder(){
-            return preorder();
+        BTIterator<T> end_preorder(){
+            BTIterator<T>  bti = BTIterator<T>(PreOrderTraverse,root);
+            return bti.end();
         }
-        inorder begin_inorder(){
-            return inorder(root);
+        BTIterator<T> begin_inorder(){
+
+            BTIterator<T>  bti = BTIterator<T>(InOrderTraverse,root);
+            return bti.begin();
         }
-        inorder end_inorder(){
-            return inorder();
+        BTIterator<T> end_inorder(){
+            BTIterator<T>  bti = BTIterator<T>(InOrderTraverse,root);
+            return bti.end();
         }
-        postorder begin_postorder(){
-            return postorder(root);
+        BTIterator<T> begin_postorder(){
+            BTIterator<T>  bti = BTIterator<T>(PostOrderTraverse,root);
+            return bti.begin();
         }
-        postorder end_postorder(){
-            return postorder();
+        BTIterator<T> end_postorder(){
+            BTIterator<T>  bti = BTIterator<T>(PostOrderTraverse,root);
+            return bti.end();
         }
         /************************************* For Testing Functions *************************************/
-        bool has_value(T val){
-            return false;
+        bool has_value(T val);
+    };
+
+    template<typename T>
+    BinaryTree<T> &BinaryTree<T>::add_root(T val) {
+        this->root = new Node<T>{val};
+        return *this;
+    }
+
+    template<typename T>
+    BinaryTree<T>::BinaryTree() {
+
+    }
+
+    template<typename T>
+    BinaryTree<T> &BinaryTree<T>::add_left(T parent_val, T child_val) {
+        Node<T>* found = find_node_by_val(parent_val);
+
+        return *this;
+    }
+
+    template<typename T>
+    BinaryTree<T> &BinaryTree<T>::add_right(T parent_val, T child_val) {
+        Node<T>* pNode = find_node_by_val(parent_val);
+        if(pNode==nullptr){
+            stringstream str;
+            str<<"Cannot add new right child. No Parent with this value exists, the parent value is: "<<parent_val;
+            throw invalid_argument(str.str());
         }
-        Node<T>* get_preorder_val_array(){
+        pNode->right = new Node<T>(child_val);
+        pNode->right->parent = pNode;
+        return *this;
+    }
+
+    template<typename T>
+    Node<T>* BinaryTree<T>::find_node_by_val(T val) {
+        if(this->root->value==val){
             return this->root;
         }
-    };
+        if(root->left!= nullptr){
+            Node<T>* curr = this->root->left;
+//            while (curr->parent!= nullptr){
+//
+//            }
+        }
+        return this->root;
+    }
+
+    /**************************************************************************FOR TESTING PURPOSES**************************************************************************/
+    template<typename T>
+    bool BinaryTree<T>::has_value(T val) {
+        return false;
+//        return find_node_by_val(val).value==val;
+    }
+
+
 }
 
