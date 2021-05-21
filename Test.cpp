@@ -10,8 +10,6 @@
 #include <algorithm>
 #include <array>
 #include "sources/BinaryTree.hpp"
-#include "sources/BTIterator.hpp"
-#include "sources/Node.hpp"
 using namespace std;
 using namespace ariel;
 using namespace doctest;
@@ -77,15 +75,16 @@ TEST_CASE("BinaryTree add new root"){
     CHECK(bt_string.has_value(random_string));
 }
 
-TEST_CASE("BinaryTree add_right, add_left, root") {
+TEST_CASE("BinaryTree editing leaf's") {
     int random_val = rand() % MAX_RAND_VALUE;
     /**
      * check normal adding
      */
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     int height = 2^(random_val+1)-1;
-    for (int node: bt) {
-        CHECK_MESSAGE(node<height,"number isn't in range");
+    auto b = bt.begin();
+    for (auto i = bt.begin(); i!=bt.end();++i) {
+        CHECK_MESSAGE((*i)<height,"number isn't in range");
     }
     /**
      * check overwriting values

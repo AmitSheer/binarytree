@@ -6,29 +6,43 @@
 #pragma once
 #include <iostream>
 #include <sstream>
-#include "BTIterator.hpp"
+#include <stack>
+//#include "BTIterator.hpp"
+//using namespace std;
+
 namespace ariel {
+    template<typename T>
+    class Node{
+    public:
+        T value;
+        int key;
+        Node *left;
+        Node *right;
+        Node *parent;
+        explicit Node(T val, Node* left = nullptr,Node* parent = nullptr,Node* right = nullptr):left(left),right(right),parent(parent){
+            value = val;
+        };
+        ~Node(){
+            free(value);
+        }
+        bool operator==(const Node<T> &rhs) const {
+            return rhs.value==this->value&&rhs.left==this->left&&rhs.right==this->right&&this->parent==rhs.parent;
+        }
+
+        bool operator!=(const Node<T> &rhs) const {
+            return rhs.value!=this->value&&rhs.left!=this->left&&rhs.right!=this->right&&this->parent!=rhs.parent;
+        }
+//            friend std::ostream& operator<<(std::ostream& os,const Node& node){return os;};
+    };
     template<typename T>
     class BinaryTree {
     private:
-        Node<T>* root;
-        Node<T>* find_node_by_val(T val);
-        static void PreOrderTraverse( Node<T>* curr_node){
-
-        }
-        static void PostOrderTraverse(Node<T>* curr_node){
-
-        }
-        static void InOrderTraverse(Node<T>* curr_node){
-
-        }
+        int id_key;
+        Node <T>* root;
+        Node <T>* find_node_by_val(Node <T>* node,T val);
     public:
-
-        BinaryTree<T>();
-
-
+        BinaryTree();
         BinaryTree<T> &add_root(T val);
-
         /**
             * if parent val not in tree throw error
             * if exist more then once make random assign to one of the options
@@ -36,9 +50,7 @@ namespace ariel {
             * @param child_val
             * @return
             */
-
         BinaryTree<T> &add_left(T parent_val, T child_val);
-
         /**
            * if parent val not in tree throw error
            * @param parent_val
@@ -52,172 +64,292 @@ namespace ariel {
             os<<"bla";
             return os;
         };
-        /************************************* Iterator Functions *************************************/
-        //TODO: PUT ALL ITERATORS IN SEPARATE HPP&CPP FILES
-
-        /*
-        class postorder{
+        /************************************* Iterators *************************************/
+        class Postorder_iterator {
         private:
-            Node<T> *m_pointer;
-
+            Node <T> *m_pointer;
+            std::stack<Node<T>*> node_stk;
         public:
-            explicit postorder(Node<T>* pNode= nullptr):m_pointer(pNode){};
-            T& operator*() const{
-                return m_pointer->value;
-            };
-            T* operator->() const{
-                return &(m_pointer->value);
-            };
-            postorder& operator++(){
+            explicit Postorder_iterator( Node <T> *pNode = nullptr){
+                if(pNode!= nullptr) {
+                    std::stack<Node<T> *> temp;
+                    temp.push(pNode);
+                    while (!temp.empty()) {
+                        Node<T> *node = temp.top();
+                        temp.pop();
+                        node_stk.push(node);
+                        if (node->left)
+                            temp.push(node->left);
+                        if (node->right)
+                            temp.push(node->right);
+                    }
+                    this->m_pointer = node_stk.top();
+                }else{
+                    this->m_pointer= nullptr;
+                }
+            }
+            explicit Postorder_iterator( std::stack<Node<T>*> node_stk){
+                this->node_stk = node_stk;
+                this->m_pointer = node_stk.top();
+            }
+            T &operator*() const {
+                return this->m_pointer->value;
+            }
 
-                m_pointer = m_pointer->right;
+            T *operator->() const {
+                return &(this->m_pointer->value);
+            }
+
+            Postorder_iterator &operator++(){
+                if(!node_stk.empty()) {
+                    this->node_stk.pop();
+                }
+                if(!node_stk.empty()) {
+                    this->m_pointer=this->node_stk.top();
+                }else{
+                    this->m_pointer= nullptr;
+                }
                 return *this;
-            };
-            const postorder operator++(int){
-                const postorder tmp=*this;
-                m_pointer = m_pointer->right;
+            }
+
+            const Postorder_iterator operator++(int) {
+                const Postorder_iterator tmp{this->node_stk};
+                ++*this;
                 return tmp;
             }
-            bool operator==(const postorder& rhs) const{return false;};
-            bool operator!=(const postorder& rhs) const{return false;};
-            friend std::ostream& operator<<(std::ostream& os,const postorder& node){return os;};
+
+            bool operator==(const Postorder_iterator &rhs) const {
+                return rhs.m_pointer==this->m_pointer;
+            }
+
+            bool operator!=(const Postorder_iterator &rhs) const {
+                return rhs.m_pointer!=this->m_pointer;
+            }
+
+            friend std::ostream &operator<<(std::ostream &os, const Postorder_iterator &node) { return os; }
         };
-        class inorder{
+        class Preorder_iterator {
         private:
-            Node<T> *m_pointer;
+            Node <T> *m_pointer;
+            std::stack<Node<T>*> node_stk;
         public:
-            explicit inorder(Node<T>* pNode= nullptr):m_pointer(pNode){};
-            T& operator*() const{
-                return m_pointer->value;
+            explicit Preorder_iterator(Node <T> *pNode = nullptr):m_pointer(pNode) {
+                this->node_stk.push(pNode);
             };
-            T* operator->() const{
-                return &(m_pointer->value);
-            };
-            inorder& operator++(){
-                m_pointer = m_pointer->right;
+            T &operator*() const {
+                return this->m_pointer->value;
+            }
+
+            T *operator->() const {
+                return &(this->m_pointer->value);
+            }
+
+            Preorder_iterator &operator++() {
+                if (!node_stk.empty()) {
+                    node_stk.pop();
+                    if (m_pointer->right != nullptr) {
+                        node_stk.push(m_pointer->right);
+                    }
+                    if (m_pointer->left != nullptr) {
+                        node_stk.push(m_pointer->left);
+                    }
+                    if (node_stk.empty()) {
+                        this->m_pointer = nullptr;
+                    } else {
+                        m_pointer = node_stk.top();
+                    }
+                }
                 return *this;
-            };
-            const inorder operator++(int){
-                const inorder tmp=*this;
-                m_pointer = m_pointer->right;
+            }
+
+            const Preorder_iterator operator++(int) {
+                const Preorder_iterator tmp = *this;
+                ++*this;
                 return tmp;
             }
-            bool operator==(const inorder& rhs) const{return false;};
-            bool operator!=(const inorder& rhs) const{return false;};
-            friend std::ostream& operator<<(std::ostream& os,const inorder& node){return os;};
+
+            bool operator==(const Preorder_iterator &rhs) const {
+                return rhs.m_pointer==this->m_pointer;
+            }
+
+            bool operator!=(const Preorder_iterator &rhs) const {
+                return rhs.m_pointer!=this->m_pointer;
+            }
+
+            friend std::ostream &operator<<(std::ostream &os, const Preorder_iterator &node) { return os; }
         };
-        class preorder{
+        class Inorder_iterator {
         private:
-            Node<T> *m_pointer;
+            Node <T> *m_pointer;
+            std::stack<Node<T>*> node_stk;
         public:
-            explicit preorder(Node<T>* pNode= nullptr):m_pointer(pNode){};
-            T& operator*() const{
-                return m_pointer->value;
+            explicit Inorder_iterator(Node <T> *pNode = nullptr){
+                Node<T> *curr = pNode;
+                while(curr!= nullptr){
+                    this->node_stk.push(curr);
+                    curr = curr->left;
+                }
+                if(this->node_stk.empty()){
+                    this->m_pointer= nullptr;
+                }else{
+                    this->m_pointer = node_stk.top();
+                }
             };
-            T* operator->() const{
-                return &(m_pointer->value);
-            };
-            preorder& operator++(){
-                m_pointer = m_pointer->right;
+            T &operator*() const {
+                return this->m_pointer->value;
+            }
+
+            T *operator->() const {
+                return &(this->m_pointer->value);
+            }
+
+            Inorder_iterator &operator++() {
+                if(!this->node_stk.empty()) {
+                    Node<T> *temp = this->node_stk.top();
+                    this->node_stk.pop();
+                    if (temp->right != nullptr) {
+                        this->node_stk.push(temp->right);
+                        temp = temp->right->left;
+                        while (temp != nullptr) {
+                            this->node_stk.push(temp);
+                            temp = temp->left;
+                        }
+                    }
+                    if(this->node_stk.empty()){
+                        this->m_pointer = nullptr;
+                    }else{
+                        this->m_pointer = this->node_stk.top();
+                    }
+                }else{
+                    this->m_pointer = nullptr;
+                }
                 return *this;
-            };
-            const preorder operator++(int){
-                const preorder tmp=*this;
-                m_pointer = m_pointer->right;
+            }
+
+            const Inorder_iterator operator++(int) {
+                const Inorder_iterator tmp = *this;
+                ++*this;
                 return tmp;
             }
-            bool operator==(const preorder& rhs) const{return false;};
-            bool operator!=(const preorder& rhs) const{return false;};
-            friend std::ostream& operator<<(std::ostream& os,const preorder& node){return os;};
+
+            bool operator==(const Inorder_iterator &rhs) const {
+                return rhs.m_pointer==this->m_pointer;
+            }
+
+            bool operator!=(const Inorder_iterator &rhs) const {
+                return rhs.m_pointer!=this->m_pointer;
+            }
+
+            friend std::ostream &operator<<(std::ostream &os, const Inorder_iterator &node) { return os; }
         };
-        */
-        BTIterator<T> begin(){
+
+
+        Inorder_iterator begin(){
             return begin_inorder();
         };
-        BTIterator<T> end(){
+        Inorder_iterator end(){
             return end_inorder();
         };
-        BTIterator<T> begin_preorder(){
-            BTIterator<T>  bti = BTIterator<T>(PreOrderTraverse,root);
-            return bti.begin();
+        Preorder_iterator begin_preorder(){
+            return Preorder_iterator(root);
         }
-        BTIterator<T> end_preorder(){
-            BTIterator<T>  bti = BTIterator<T>(PreOrderTraverse,root);
-            return bti.end();
+        Preorder_iterator end_preorder(){
+            return  Preorder_iterator();
         }
-        BTIterator<T> begin_inorder(){
-
-            BTIterator<T>  bti = BTIterator<T>(InOrderTraverse,root);
-            return bti.begin();
+        Inorder_iterator begin_inorder(){
+            return Inorder_iterator(root);
         }
-        BTIterator<T> end_inorder(){
-            BTIterator<T>  bti = BTIterator<T>(InOrderTraverse,root);
-            return bti.end();
+        Inorder_iterator end_inorder(){
+            return Inorder_iterator();
         }
-        BTIterator<T> begin_postorder(){
-            BTIterator<T>  bti = BTIterator<T>(PostOrderTraverse,root);
-            return bti.begin();
+        Postorder_iterator begin_postorder(){
+            return Postorder_iterator(root);
         }
-        BTIterator<T> end_postorder(){
-            BTIterator<T>  bti = BTIterator<T>(PostOrderTraverse,root);
-            return bti.end();
+        Postorder_iterator end_postorder(){
+            return Postorder_iterator();
         }
         /************************************* For Testing Functions *************************************/
         bool has_value(T val);
     };
 
     template<typename T>
-    BinaryTree<T> &BinaryTree<T>::add_root(T val) {
-        this->root = new Node<T>{val};
+    BinaryTree<T> &BinaryTree<T>::add_right(T parent_val, T child_val) {
+        Node<T>* pNode = find_node_by_val(this->root,parent_val);
+        if(pNode==nullptr){
+            std::stringstream str;
+            str<<"Cannot add new right child. No Parent with this value exists, the parent value is: "<<parent_val;
+            throw std::invalid_argument(str.str());
+        }
+        if(pNode->right== nullptr) {
+            pNode->right = new Node<T>(child_val);
+            pNode->right->key = this->id_key++;
+            pNode->right->parent = pNode;
+        }else{
+            pNode->right->value=child_val;
+        }
         return *this;
     }
 
     template<typename T>
-    BinaryTree<T>::BinaryTree() {
+    bool BinaryTree<T>::has_value(T val) {
+        Node<T>* node =find_node_by_val(root,val);
+        return node!= nullptr;
+    }
 
+    template<typename T>
+    Node<T> *BinaryTree<T>::find_node_by_val(Node<T> *node, T val) {
+        if(node == nullptr){
+            return nullptr;
+        }
+        if(val==node->value){
+            return node;
+        }
+        Node<T>* left= nullptr,*right= nullptr;
+        if(node->left!= nullptr){
+            left = find_node_by_val(node->left,val);
+        }
+        if(node->right!= nullptr){
+            right = find_node_by_val(node->right,val);
+        }
+        if(left!= nullptr){
+            return left;
+        }else{
+            return right;
+        }
     }
 
     template<typename T>
     BinaryTree<T> &BinaryTree<T>::add_left(T parent_val, T child_val) {
-        Node<T>* found = find_node_by_val(parent_val);
-
-        return *this;
-    }
-
-    template<typename T>
-    BinaryTree<T> &BinaryTree<T>::add_right(T parent_val, T child_val) {
-        Node<T>* pNode = find_node_by_val(parent_val);
+        Node<T>* pNode = find_node_by_val(this->root,parent_val);
         if(pNode==nullptr){
-            stringstream str;
+            std::stringstream str;
             str<<"Cannot add new right child. No Parent with this value exists, the parent value is: "<<parent_val;
-            throw invalid_argument(str.str());
+            throw std::invalid_argument(str.str());
         }
-        pNode->right = new Node<T>(child_val);
-        pNode->right->parent = pNode;
+        if(pNode->left== nullptr) {
+            pNode->left = new Node<T>(child_val);
+            pNode->left->key = this->id_key++;
+            pNode->left->parent = pNode;
+        } else{
+            pNode->left->value=child_val;
+        }
         return *this;
     }
 
     template<typename T>
-    Node<T>* BinaryTree<T>::find_node_by_val(T val) {
-        if(this->root->value==val){
-            return this->root;
+    BinaryTree<T> &BinaryTree<T>::add_root(T val) {
+        if(root != nullptr){
+            this->root->value = val;
+        }else{
+            this->root = new Node<T>(val);
+            this->root->key= this->id_key++;
         }
-        if(root->left!= nullptr){
-            Node<T>* curr = this->root->left;
-//            while (curr->parent!= nullptr){
-//
-//            }
-        }
-        return this->root;
+        return *this;
     }
 
-    /**************************************************************************FOR TESTING PURPOSES**************************************************************************/
     template<typename T>
-    bool BinaryTree<T>::has_value(T val) {
-        return false;
-//        return find_node_by_val(val).value==val;
+    BinaryTree<T>::BinaryTree():root(nullptr) {
+        this->id_key=0;
     }
-
-
 }
 
