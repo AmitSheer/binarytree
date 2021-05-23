@@ -9,16 +9,97 @@
 #include <unistd.h>
 #include <algorithm>
 #include <array>
+#include <cmath>
+#include <queue>
 #include "sources/BinaryTree.hpp"
 using namespace std;
 using namespace ariel;
 using namespace doctest;
+constexpr int MAX_RAND_VALUE= 3;
+constexpr int FOR_TRAVERS_FUNCTION= 4;
 
-constexpr int MAX_RAND_VALUE= 9;
-constexpr int FOR_TRAVERS_FUNCTION= 3;
-constexpr std::array<int,15> preorder =  {0,1,3,7,8,4,9,10,2,5,11,12,6,13,14};
-constexpr std::array<int,15> postorder = {7,8,3,9,10,4,1,11,12,5,13,14,6,2,0};
-constexpr std::array<int,15> inorder =   {7,3,8,1,9,10,4,0,11,5,12,2,13,6,14};
+/*
+ * implementation ta from https://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
+ */
+queue<int> createStackForInOrder(BinaryTree<int>* bt){
+    Node<int>* node = bt->find_node_by_val(0);
+    queue<int> value_order;
+    stack<Node<int>*> s;
+
+    while (node != NULL || s.empty() == false)
+    {
+        /* Reach the left most Node of the
+           curr Node */
+        while (node !=  NULL)
+        {
+            /* place pointer to a tree node on
+               the stack before traversing
+              the node's left subtree */
+            s.push(node);
+            node = node->left;
+        }
+
+        /* Current must be NULL at this point */
+        node = s.top();
+        value_order.push(node->value);
+        s.pop();
+
+                /* we have visited the node and its
+                   left subtree.  Now, it's right
+                   subtree's turn */
+        node = node->right;
+    }
+    return value_order;
+}
+/*
+ * implementation ta from https://www.geeksforgeeks.org/iterative-preorder-traversal/
+ */
+queue<int> createStackForPreOrder(BinaryTree<int>* bt){
+    Node<int>* node = bt->find_node_by_val(0);
+    queue<int> value_order;
+    stack<Node<int>*> s;
+    s.push(node);
+    while (s.empty() == false) {
+        // Pop the top item from stack and print it
+        node = s.top();
+        value_order.push(node->value);
+        s.pop();
+
+        // Push right and left children of the popped node to stack
+        if (node->right)
+            s.push(node->right);
+        if (node->left)
+            s.push(node->left);
+    }
+    return value_order;
+}
+/*
+ * implementation ta from https://www.geeksforgeeks.org/iterative-postorder-traversal/
+ */
+stack<int> createStackForPostOrder(BinaryTree<int>* bt){
+    Node<int>* node = bt->find_node_by_val(0);
+    stack<int> value_order;
+    stack<Node<int>*> s1;
+
+    // push root to first stack
+    s1.push(node);
+
+    // Run while first stack is not empty
+    while (!s1.empty()) {
+        // Pop an item from s1 and push it to s2
+        node = s1.top();
+        s1.pop();
+        value_order.push(node->value);
+
+        // Push left and right children
+        // of removed item to s1
+        if (node->left)
+            s1.push(node->left);
+        if (node->right)
+            s1.push(node->right);
+    }
+    return value_order;
+}
 /*
  * credit to https://stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c
  */
@@ -38,13 +119,15 @@ std::string gen_random( size_t length )
     return str;
 }
 
+
+
 BinaryTree<int> binaryTreeGenerator(int n){
     BinaryTree<int> bt;
     bt.add_root(0);
-    int num_of_nodes = 2 ^(n - 1);
+    int num_of_nodes = pow(2,(n + 1))-1;
     for (int i = 0; i < num_of_nodes; ++i) {
-        bt.add_left(2*i,2*i+1);
-        bt.add_right(2*i,2*i+2);
+        bt.add_left(i,2*i+1);
+        bt.add_right(i,2*i+2);
     }
     return bt;
 }
@@ -81,18 +164,18 @@ TEST_CASE("BinaryTree editing leaf's") {
      * check normal adding
      */
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
-    int height = 2^(random_val+1)-1;
+    int num_of_nodes = pow(2, (random_val + 1)) * 2 + 2;
     auto b = bt.begin();
     for (auto i = bt.begin(); i!=bt.end();++i) {
-        CHECK_MESSAGE((*i)<height,"number isn't in range");
+        CHECK_MESSAGE((*i) < num_of_nodes, "number isn't in range");
     }
     /**
      * check overwriting values
      */
-     int random_root = rand()%height;
-     int random_parent= rand()%height;
-     int random_left = height+random_val;
-     int random_right = height+random_val+MAX_RAND_VALUE;
+     int random_root = rand() % num_of_nodes;
+     int random_parent= rand() % num_of_nodes;
+     int random_left = num_of_nodes + random_val;
+     int random_right = num_of_nodes + random_val + MAX_RAND_VALUE;
      bt.add_root(random_root);
      bt.add_right(random_parent,random_right);
      bt.add_left(random_parent,random_left);
@@ -109,7 +192,7 @@ TEST_CASE("BinaryTree editing leaf's") {
       /**
        * throws exception when value isn't present at tree
        */
-    int nonexisting_val = rand()+height+random_val+MAX_RAND_VALUE;
+    int nonexisting_val = rand() + num_of_nodes + random_val + MAX_RAND_VALUE;
     CHECK_THROWS(invalid_tree.add_right(nonexisting_val,random_right));
     CHECK_THROWS(invalid_tree.add_right(nonexisting_val,random_right));
 }
@@ -139,34 +222,49 @@ TEST_CASE("inorder"){
     int increase_val = 2^(random_val+1)-1;
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     auto inorder_b = bt.begin_inorder();
+    // check changing value
     (*inorder_b) = increase_val+4;
     CHECK((*inorder_b)==increase_val+4);
+
+    // check moving correctly to next value
+    auto node = bt.find_node_by_val(increase_val+4);
+    node = node->parent;
     CHECK_NOTHROW(++inorder_b);
-    CHECK((*inorder_b)==(2^(random_val)));
+    CHECK((*inorder_b)==node->value);
+    //reset begin
     inorder_b = bt.begin_inorder();
     auto second_in_travers = inorder_b++;
+    //check == and != operators
     CHECK_FALSE((*inorder_b)==(*second_in_travers));
     CHECK_FALSE(inorder_b==second_in_travers);
     second_in_travers = inorder_b;
     CHECK(inorder_b==second_in_travers);
     CHECK_FALSE(inorder_b!=second_in_travers);
 }
+
 TEST_CASE("postorder"){
     int random_val = rand()%MAX_RAND_VALUE;
     int increase_val = 2^(random_val+1)-1;
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     auto postorder_b = bt.begin_postorder();
     (*postorder_b) = increase_val+4;
-            CHECK((*postorder_b)==(increase_val+4));
-            CHECK_NOTHROW(++postorder_b);
-            CHECK((*postorder_b)==(2^(random_val)));
+    CHECK((*postorder_b)==(increase_val+4));
+
+    // check moving correctly to next value
+    auto node = bt.find_node_by_val(increase_val+4);
+    node = node->parent->right;
+    CHECK_NOTHROW(++postorder_b);
+    CHECK((*postorder_b)==node->value);
+
+    //reset begin
     postorder_b = bt.begin_postorder();
     auto second_in_travers = postorder_b++;
-            CHECK_FALSE((*postorder_b)==(*second_in_travers));
-            CHECK_FALSE(postorder_b==second_in_travers);
+    //check == and != operators
+    CHECK_FALSE((*postorder_b)==(*second_in_travers));
+    CHECK_FALSE(postorder_b==second_in_travers);
     second_in_travers = postorder_b;
-            CHECK(postorder_b==second_in_travers);
-            CHECK_FALSE(postorder_b!=second_in_travers);
+    CHECK(postorder_b==second_in_travers);
+    CHECK_FALSE(postorder_b!=second_in_travers);
 }
 TEST_CASE("preorder"){
     int random_val = rand()%MAX_RAND_VALUE;
@@ -174,31 +272,41 @@ TEST_CASE("preorder"){
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     auto preorder_b = bt.begin_preorder();
     (*preorder_b) = increase_val+4;
-            CHECK((*preorder_b)==increase_val+4);
-            CHECK_NOTHROW(++preorder_b);
-            CHECK((*preorder_b)==1);
+    CHECK((*preorder_b)==increase_val+4);
+
+    // check moving correctly to next value
+    auto node = bt.find_node_by_val(increase_val+4);
+    node = node->left;
+    CHECK_NOTHROW(++preorder_b);
+    CHECK((*preorder_b)==node->value);
+
+    //reset begin
     preorder_b = bt.begin_preorder();
     auto second_in_travers = preorder_b++;
-            CHECK_FALSE((*preorder_b)==(*second_in_travers));
-            CHECK_FALSE(preorder_b==second_in_travers);
+    //check == and != operators
+    CHECK_FALSE((*preorder_b)==(*second_in_travers));
+    CHECK_FALSE(preorder_b==second_in_travers);
     second_in_travers = preorder_b;
-            CHECK(preorder_b==second_in_travers);
-            CHECK_FALSE(preorder_b!=second_in_travers);
+    CHECK(preorder_b==second_in_travers);
+    CHECK_FALSE(preorder_b!=second_in_travers);
 }
 
-TEST_CASE("Traverse Pre-Order"){
+TEST_CASE("Traverse is correct"){
     BinaryTree<int> bt = binaryTreeGenerator(FOR_TRAVERS_FUNCTION);
-    int num_of_nodes = 2^(FOR_TRAVERS_FUNCTION+1)-1;
+    int num_of_nodes = pow(2,(FOR_TRAVERS_FUNCTION+2))-1;
+    queue<int> preorder_print = createStackForPreOrder(&bt);
+    stack<int> postorder_print = createStackForPostOrder(&bt);
+    queue<int> inorder_print = createStackForInOrder(&bt);
     auto preorder_b = bt.begin_preorder();
     auto preorder_e = bt.end_preorder();
     auto inorder_b = bt.begin_inorder();
     auto inorder_e = bt.end_inorder();
     auto postorder_b = bt.begin_postorder();
     auto postorder_e = bt.end_postorder();
-    for (std::size_t i = 0; i < num_of_nodes&&preorder_b!=preorder_e&&inorder_b!=inorder_e&&postorder_b!=postorder_e; ++i,++postorder_b,++inorder_b,++preorder_b) {
-        CHECK((*preorder_b)==preorder.at(i));
-        CHECK((*inorder_b)==inorder.at(i));
-        CHECK((*postorder_b)==postorder.at(i));
+    for (; preorder_b!=preorder_e&&inorder_b!=inorder_e&&postorder_b!=postorder_e; ++preorder_b,++inorder_b,++postorder_b,inorder_print.pop(),preorder_print.pop(),postorder_print.pop()) {
+        CHECK((*preorder_b)==preorder_print.front());
+        CHECK((*inorder_b)==inorder_print.front());
+        CHECK((*postorder_b)==postorder_print.top());
     }
     if(postorder_b!=postorder_e){
         FAIL_CHECK("didn't get to the end of postorder");
