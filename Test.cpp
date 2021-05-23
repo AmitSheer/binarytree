@@ -25,7 +25,6 @@ queue<int> createStackForInOrder(BinaryTree<int>* bt){
     Node<int>* node = bt->find_node_by_val(0);
     queue<int> value_order;
     stack<Node<int>*> s;
-
     while (node != NULL || s.empty() == false)
     {
         /* Reach the left most Node of the
@@ -118,8 +117,6 @@ std::string gen_random( size_t length )
     std::generate_n( str.begin(), length, randchar );
     return str;
 }
-
-
 
 BinaryTree<int> binaryTreeGenerator(int n){
     BinaryTree<int> bt;
@@ -223,14 +220,13 @@ TEST_CASE("inorder"){
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     auto inorder_b = bt.begin_inorder();
     // check changing value
+    Node<int>* parent = bt.find_node_by_val(*inorder_b)->parent;
     (*inorder_b) = increase_val+4;
-    CHECK((*inorder_b)==increase_val+4);
+    CHECK((*inorder_b)==parent->left->value);
 
     // check moving correctly to next value
-    auto node = bt.find_node_by_val(increase_val+4);
-    node = node->parent;
     CHECK_NOTHROW(++inorder_b);
-    CHECK((*inorder_b)==node->value);
+    CHECK((*inorder_b)==parent->value);
     //reset begin
     inorder_b = bt.begin_inorder();
     auto second_in_travers = inorder_b++;
@@ -241,20 +237,18 @@ TEST_CASE("inorder"){
     CHECK(inorder_b==second_in_travers);
     CHECK_FALSE(inorder_b!=second_in_travers);
 }
-
 TEST_CASE("postorder"){
     int random_val = rand()%MAX_RAND_VALUE;
     int increase_val = 2^(random_val+1)-1;
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     auto postorder_b = bt.begin_postorder();
+    Node<int>* right = bt.find_node_by_val(*postorder_b)->parent->right;
     (*postorder_b) = increase_val+4;
-    CHECK((*postorder_b)==(increase_val+4));
+    CHECK((*postorder_b)==right->parent->left->value);
 
     // check moving correctly to next value
-    auto node = bt.find_node_by_val(increase_val+4);
-    node = node->parent->right;
     CHECK_NOTHROW(++postorder_b);
-    CHECK((*postorder_b)==node->value);
+    CHECK((*postorder_b)==right->value);
 
     //reset begin
     postorder_b = bt.begin_postorder();
@@ -271,14 +265,15 @@ TEST_CASE("preorder"){
     int increase_val = 2^(random_val+1)-1;
     BinaryTree<int> bt = binaryTreeGenerator(random_val);
     auto preorder_b = bt.begin_preorder();
+    Node<int>* left = bt.find_node_by_val(*preorder_b)->left;
+
     (*preorder_b) = increase_val+4;
-    CHECK((*preorder_b)==increase_val+4);
+    CHECK((*preorder_b)==left->parent->value);
 
     // check moving correctly to next value
-    auto node = bt.find_node_by_val(increase_val+4);
-    node = node->left;
+
     CHECK_NOTHROW(++preorder_b);
-    CHECK((*preorder_b)==node->value);
+    CHECK((*preorder_b)==left->value);
 
     //reset begin
     preorder_b = bt.begin_preorder();

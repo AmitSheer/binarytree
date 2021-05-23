@@ -21,17 +21,6 @@ namespace ariel {
         explicit Node(T val=0, Node* left = nullptr,Node* parent = nullptr,Node* right = nullptr):left(left),right(right),parent(parent){
             value = val;
         };
-        ~Node(){
-            if(parent!= nullptr){
-                free(parent);
-            }
-            if(left!= nullptr){
-                free(left);
-            }
-            if(right!= nullptr){
-                free(right);
-            }
-        }
         bool operator==(const Node &rhs) const {
             return rhs.value==this->value&&rhs.left==this->left&&rhs.right==this->right&&this->parent==rhs.parent;
         }
@@ -44,10 +33,12 @@ namespace ariel {
     template<typename T>
     class BinaryTree {
     private:
-
         Node<T> * root;
+        Node<T>* copy_tree(Node<T>* other);
+        void destroy_tree(Node<T>* leaf);
     public:
-        BinaryTree();
+        BinaryTree<T>();
+        BinaryTree<T>(BinaryTree* bt);
         ~BinaryTree();
         BinaryTree<T> &add_root(T val);
         /**
@@ -64,7 +55,7 @@ namespace ariel {
            * @param child_val
            * @return
            */
-        BinaryTree &add_right(T parent_val, T child_val) ;
+        BinaryTree<T> &add_right(T parent_val, T child_val) ;
 
         /************************************* Operator Functions *************************************/
         friend std::ostream &operator<<(std::ostream &os, const BinaryTree<T>& binaryTree){
@@ -102,11 +93,9 @@ namespace ariel {
             T &operator*() const {
                 return this->m_pointer->value;
             }
-
             T *operator->() const {
                 return &(this->m_pointer->value);
             }
-
             Postorder_iterator &operator++(){
                 if(!node_stk.empty()) {
                     this->node_stk.pop();
@@ -118,21 +107,17 @@ namespace ariel {
                 }
                 return *this;
             }
-
             const Postorder_iterator operator++(int) {
                 const Postorder_iterator tmp{this->node_stk};
                 ++*this;
                 return tmp;
             }
-
             bool operator==(const Postorder_iterator &rhs) const {
                 return rhs.m_pointer==this->m_pointer;
             }
-
             bool operator!=(const Postorder_iterator &rhs) const {
                 return rhs.m_pointer!=this->m_pointer;
             }
-
             friend std::ostream &operator<<(std::ostream &os, const Postorder_iterator &node) { return os; }
         };
         class Preorder_iterator {
@@ -365,11 +350,35 @@ namespace ariel {
     }
 
     template<typename T>
+    BinaryTree<T>::BinaryTree(BinaryTree* bt) {
+        this->root = copy_tree(bt->root);
+    }
+
+    template<typename T>
     BinaryTree<T>::~BinaryTree(){
-//        free(root);
-//        for (auto i = begin_postorder(); i !=end_postorder() ; ++i) {
-//            free(find_node_by_val(root,*i));
-//        }
+        destroy_tree(this->root);
+    }
+
+    template<typename T>
+    Node<T> *BinaryTree<T>::copy_tree(Node<T> *other) {
+        if (other == NULL)
+        {
+            return NULL;
+        }
+
+        Node<T>* newNode = new Node<T>(other->value);
+        newNode->left = copyTree(other->left);
+        newNode->right = copyTree(other->right);
+        return newNode;
+    }
+
+    template<typename T>
+    void BinaryTree<T>::destroy_tree(Node<T> *other) {
+        if(other!= nullptr){
+            destroy_tree(other->right);
+            destroy_tree(other->left);
+            delete other;
+        }
     }
 
 }
