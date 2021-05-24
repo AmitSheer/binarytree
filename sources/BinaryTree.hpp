@@ -34,8 +34,8 @@ namespace ariel {
     class BinaryTree {
     private:
         Node<T> * root;
-        Node<T>* copy_tree(Node<T>* other);
-        void destroy_tree(Node<T>* leaf);
+        Node<T>* copy_ctor(Node<T>* other);
+        void delete_tree(Node<T>* leaf);
     public:
         BinaryTree<T>();
         BinaryTree<T>(BinaryTree* bt);
@@ -351,32 +351,32 @@ namespace ariel {
 
     template<typename T>
     BinaryTree<T>::BinaryTree(BinaryTree* bt) {
-        this->root = copy_tree(bt->root);
+        this->root = copy_ctor(bt->root);
     }
 
     template<typename T>
     BinaryTree<T>::~BinaryTree(){
-        destroy_tree(this->root);
+        delete_tree(this->root);
     }
 
     template<typename T>
-    Node<T> *BinaryTree<T>::copy_tree(Node<T> *other) {
+    Node<T> *BinaryTree<T>::copy_ctor(Node<T> *other) {
         if (other == NULL)
         {
             return NULL;
         }
 
         Node<T>* newNode = new Node<T>(other->value);
-        newNode->left = copyTree(other->left);
-        newNode->right = copyTree(other->right);
+        newNode->left = copy_ctor(other->left);
+        newNode->right = copy_ctor(other->right);
         return newNode;
     }
 
     template<typename T>
-    void BinaryTree<T>::destroy_tree(Node<T> *other) {
+    void BinaryTree<T>::delete_tree(Node<T> *other) {
         if(other!= nullptr){
-            destroy_tree(other->right);
-            destroy_tree(other->left);
+            delete_tree(other->right);
+            delete_tree(other->left);
             delete other;
         }
     }
