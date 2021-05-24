@@ -338,8 +338,6 @@ namespace ariel {
         if(root != nullptr){
             this->root->value = val;
         }else{
-//            this->root->value = val;
-//            this->root->key = this->id_key++;
             this->root= new Node<T>(val);
         }
         return *this;
