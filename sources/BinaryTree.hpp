@@ -35,7 +35,7 @@ namespace ariel {
     class BinaryTree {
     private:
         Node<T> * root;
-        void copy_ctor(Node<T>& this_tree_node, const Node<T>& other_tree_node);
+        void copy_ctor(Node<T>* this_tree_node, const Node<T>* other_tree_node);
         void delete_tree(Node<T>* node);
     public:
         BinaryTree<T>();
@@ -83,7 +83,7 @@ namespace ariel {
             // so that it won't try to access invalid memory
             if(bt.root!= nullptr) {
                 root = new Node<T>{bt.root->value};
-                copy_ctor(*root, *bt.root);
+                copy_ctor(root, bt.root);
             }
             return *this;
         }
@@ -376,14 +376,14 @@ namespace ariel {
     }
 
     template<typename T>
-    void BinaryTree<T>::copy_ctor(Node<T>& this_tree_node, const Node<T>& other_tree_node) {
-        if(other_tree_node.left != nullptr){
-            this_tree_node.left = new Node<T>(other_tree_node.left->value);
-            copy_ctor(*this_tree_node.left, *other_tree_node.left);
+    void BinaryTree<T>::copy_ctor(Node<T>* this_tree_node, const Node<T>* other_tree_node) {
+        if(other_tree_node->left != nullptr){
+            this_tree_node->left = new Node<T>(other_tree_node->left->value);
+            copy_ctor(this_tree_node->left, other_tree_node->left);
         }
-        if(other_tree_node.right != nullptr){
-            this_tree_node.right = new Node<T>(other_tree_node.right->value);
-            copy_ctor(*this_tree_node.right, *other_tree_node.right);
+        if(other_tree_node->right != nullptr){
+            this_tree_node->right = new Node<T>(other_tree_node->right->value);
+            copy_ctor(this_tree_node->right, other_tree_node->right);
         }
     }
 
@@ -396,7 +396,7 @@ namespace ariel {
     BinaryTree<T>::BinaryTree(const BinaryTree& bt) {
         if(bt.root!= nullptr){
             this->root = new Node<T>(bt.root->value);
-            copy_ctor(*root,*bt.root);
+            copy_ctor(root,bt.root);
         }
     }
 
