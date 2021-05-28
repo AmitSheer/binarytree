@@ -18,8 +18,9 @@ namespace ariel {
         Node *left= nullptr;
         Node *right= nullptr;
         Node *parent= nullptr;
-        explicit Node(T val=0, Node* left = nullptr,Node* parent = nullptr,Node* right = nullptr):left(left),right(right),parent(parent){
-            value = val;
+        Node()= default;
+        Node(const T &val) : value(val), parent(nullptr), left(nullptr), right(nullptr){
+            this->value = val;
         };
         bool operator==(const Node &rhs) const {
             return rhs.value==this->value&&rhs.left==this->left&&rhs.right==this->right&&this->parent==rhs.parent;
@@ -34,11 +35,12 @@ namespace ariel {
     class BinaryTree {
     private:
         Node<T> * root;
-        Node<T>* copy_ctor(Node<T>* other);
-        void delete_tree(Node<T>* leaf);
+        void copy_ctor(Node<T>& this_tree_node, const Node<T>& other_tree_node);
+        void delete_tree(Node<T>* node);
     public:
         BinaryTree<T>();
-        BinaryTree<T>(BinaryTree* bt);
+        BinaryTree<T>(const BinaryTree& bt);
+        BinaryTree<T>(BinaryTree&& bt) noexcept ;
         ~BinaryTree();
         BinaryTree<T> &add_root(T val);
         /**
@@ -62,6 +64,29 @@ namespace ariel {
             os<<"bla";
             return os;
         };
+        BinaryTree& operator=(BinaryTree<T>&& bt) noexcept {
+            if (root){ delete root;}
+            root  = bt.root;
+            bt.root = nullptr;
+            return *this;
+        }
+        BinaryTree &operator=(const BinaryTree<T> &bt) {
+            //check if equals to it-self
+            if (this == &bt) {
+                return *this;
+            }
+            // remove old pointer and associated data
+            if (root != nullptr) {
+                delete root;
+            }
+            // check if root from other tree is not nullptr
+            // so that it won't try to access invalid memory
+            if(bt.root!= nullptr) {
+                root = new Node<T>{bt.root->value};
+                copy_ctor(*root, *bt.root);
+            }
+            return *this;
+        }
         /************************************* Iterators *************************************/
         class Postorder_iterator {
         private:
@@ -76,10 +101,12 @@ namespace ariel {
                         Node <T>*node = temp.top();
                         temp.pop();
                         node_stk.push(node);
-                        if (node->left)
+                        if (node->left) {
                             temp.push(node->left);
-                        if (node->right)
+                        }
+                        if (node->right) {
                             temp.push(node->right);
+                        }
                     }
                     this->m_pointer = node_stk.top();
                 }else{
@@ -107,7 +134,7 @@ namespace ariel {
                 }
                 return *this;
             }
-            const Postorder_iterator operator++(int) {
+            Postorder_iterator operator++(int) {
                 const Postorder_iterator tmp{this->node_stk};
                 ++*this;
                 return tmp;
@@ -157,7 +184,7 @@ namespace ariel {
                 return *this;
             }
 
-            const Preorder_iterator operator++(int) {
+            Preorder_iterator operator++(int) {
                 const Preorder_iterator tmp = *this;
                 ++*this;
                 return tmp;
@@ -221,7 +248,7 @@ namespace ariel {
                 return *this;
             }
 
-            const Inorder_iterator operator++(int) {
+            Inorder_iterator operator++(int) {
                 const Inorder_iterator tmp = *this;
                 ++*this;
                 return tmp;
@@ -264,7 +291,6 @@ namespace ariel {
             return Postorder_iterator();
         }
         /************************************* For Testing Functions *************************************/
-        bool has_value(T val);
         Node<T> * find_node_by_val(Node<T> * node,T val){
             if(node == nullptr){
                 return nullptr;
@@ -272,7 +298,8 @@ namespace ariel {
             if(val==node->value){
                 return node;
             }
-            Node<T>* left= nullptr,*right= nullptr;
+            Node<T>* left= nullptr;
+            Node<T>* right= nullptr;
             if(node->left!= nullptr){
                 left = find_node_by_val(node->left,val);
             }
@@ -281,9 +308,8 @@ namespace ariel {
             }
             if(left!= nullptr){
                 return left;
-            }else{
-                return right;
             }
+            return right;
         };
         Node<T> * find_node_by_val(T val){
             if(val==root->value){
@@ -293,35 +319,14 @@ namespace ariel {
         };
     };
 
-    template<typename T>
-    BinaryTree<T> &BinaryTree<T>::add_right(T parent_val, T child_val) {
-        Node<T>* pNode = find_node_by_val(this->root,parent_val);
-        if(pNode==nullptr){
-            std::stringstream str;
-            str<<"Cannot add new right child. No Parent with this value exists, the parent value is: "<<parent_val;
-            throw std::invalid_argument(str.str());
-        }
-        if(pNode->right== nullptr) {
-            pNode->right = new Node<T>(child_val);
-            pNode->right->parent = pNode;
-        }else{
-            pNode->right->value=child_val;
-        }
-        return *this;
-    }
-
-    template<typename T>
-    bool BinaryTree<T>::has_value(T val) {
-        Node<T>* node =find_node_by_val(root,val);
-        return node!= nullptr;
-    }
+    /****************************************************************** public functions  ************************************************************************/
 
     template<typename T>
     BinaryTree<T> &BinaryTree<T>::add_left(T parent_val, T child_val) {
         Node<T>* pNode = find_node_by_val(this->root,parent_val);
         if(pNode==nullptr){
             std::stringstream str;
-            str<<"Cannot add new right child. No Parent with this value exists, the parent value is: "<<parent_val;
+            str<<"Cannot add new right child. No Parent with this value exists";
             throw std::invalid_argument(str.str());
         }
         if(pNode->left== nullptr) {
@@ -329,6 +334,23 @@ namespace ariel {
             pNode->left->parent = pNode;
         } else{
             pNode->left->value=child_val;
+        }
+        return *this;
+    }
+
+    template<typename T>
+    BinaryTree<T> &BinaryTree<T>::add_right(T parent_val, T child_val) {
+        Node<T>* pNode = find_node_by_val(this->root,parent_val);
+        if(pNode==nullptr){
+            std::stringstream str;
+            str<<"Cannot add new right child. No Parent with this value exists.";
+            throw std::invalid_argument(str.str());
+        }
+        if(pNode->right== nullptr) {
+            pNode->right = new Node<T>(child_val);
+            pNode->right->parent = pNode;
+        }else{
+            pNode->right->value=child_val;
         }
         return *this;
     }
@@ -342,14 +364,40 @@ namespace ariel {
         }
         return *this;
     }
+    /****************************************************************** private functions  ************************************************************************/
 
+    template<typename T>
+    void BinaryTree<T>::delete_tree(Node<T> *node) {
+        if(node != nullptr){
+            delete_tree(node->right);
+            delete_tree(node->left);
+            delete node;
+        }
+    }
+
+    template<typename T>
+    void BinaryTree<T>::copy_ctor(Node<T>& this_tree_node, const Node<T>& other_tree_node) {
+        if(other_tree_node.left != nullptr){
+            this_tree_node.left = new Node<T>(other_tree_node.left->value);
+            copy_ctor(*this_tree_node.left, *other_tree_node.left);
+        }
+        if(other_tree_node.right != nullptr){
+            this_tree_node.right = new Node<T>(other_tree_node.right->value);
+            copy_ctor(*this_tree_node.right, *other_tree_node.right);
+        }
+    }
+
+    /****************************************************************** ctors  ************************************************************************/
     template<typename T>
     BinaryTree<T>::BinaryTree():root(nullptr) {
     }
 
     template<typename T>
-    BinaryTree<T>::BinaryTree(BinaryTree* bt) {
-        this->root = copy_ctor(bt->root);
+    BinaryTree<T>::BinaryTree(const BinaryTree& bt) {
+        if(bt.root!= nullptr){
+            this->root = new Node<T>(bt.root->value);
+            copy_ctor(*root,*bt.root);
+        }
     }
 
     template<typename T>
@@ -358,25 +406,9 @@ namespace ariel {
     }
 
     template<typename T>
-    Node<T> *BinaryTree<T>::copy_ctor(Node<T> *other) {
-        if (other == NULL)
-        {
-            return NULL;
-        }
-
-        Node<T>* newNode = new Node<T>(other->value);
-        newNode->left = copy_ctor(other->left);
-        newNode->right = copy_ctor(other->right);
-        return newNode;
-    }
-
-    template<typename T>
-    void BinaryTree<T>::delete_tree(Node<T> *other) {
-        if(other!= nullptr){
-            delete_tree(other->right);
-            delete_tree(other->left);
-            delete other;
-        }
+    BinaryTree<T>::BinaryTree(BinaryTree &&bt)  noexcept {
+        this->root = bt.root;
+        bt.root = nullptr;
     }
 
 }
